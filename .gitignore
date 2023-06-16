@@ -1,4 +1,4 @@
 envs/.db
-envs/.notifer
+envs/.notifier
 .vscode
 .pytest_cache
