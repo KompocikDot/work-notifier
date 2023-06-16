@@ -1,8 +1,8 @@
-version: '3.8'
+version: '3.5'
 
 services:
   db:
-    build: postgres
+    image: postgres:alpine3.17
     env_file:
       - envs/.db
     ports:
@@ -13,6 +13,6 @@ services:
       context: .
       dockerfile: Dockerfile
     env_file:
-      - envs/.notifer
+      - envs/.notifier
     depends_on:
       - db
