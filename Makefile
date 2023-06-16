@@ -6,3 +6,7 @@ run:
 
 test:
 	pytest
+
+pc:
+	pre-commit autoupdate
+	pre-commit run -a

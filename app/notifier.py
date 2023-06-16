@@ -9,10 +9,10 @@ class Notifier:
         pass
 
     def retrieve_justjoin_data(self) -> dict:
-        pass
+        return {}
 
     def filter_advertisements(self) -> dict:
-        pass
+        return {}
 
     def send_webhook(self) -> None:
         pass
