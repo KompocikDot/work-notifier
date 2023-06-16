@@ -1,4 +1,4 @@
-# work-notifier
+# workifier
 
 > Project monitoring few popular job-related websites **(like justjoin.it)** for new job advertisements. New ads are filtered and if they meet criteria they are sent to the user through discord webhook
 

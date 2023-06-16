@@ -1,3 +1,4 @@
-.env
+envs/.db
+envs/.notifer
 .vscode
 .pytest_cache

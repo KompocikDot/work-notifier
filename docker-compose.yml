@@ -3,6 +3,16 @@ version: '3.8'
 services:
   db:
     build: postgres
+    env_file:
+      - envs/.db
     ports:
       - 5432:5432
-    
+  
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - envs/.notifer
+    depends_on:
+      - db
