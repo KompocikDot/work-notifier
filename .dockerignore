@@ -1,1 +1,4 @@
 README.md
+.env.example
+.vscode
+.pytest_cache
