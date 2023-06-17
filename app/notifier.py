@@ -1,3 +1,11 @@
+import binascii
+import os
+
+import requests
+
+from .constants import JUST_JOIN_IT_API_URL
+
+
 class Notifier:
     def __init__(self) -> None:
         pass
@@ -9,7 +17,12 @@ class Notifier:
         pass
 
     def retrieve_justjoin_data(self) -> dict:
-        return {}
+        # Using random hash to bypass cache, it should work,
+        # REQUIRES BROADER TESTS
+        random_hash = binascii.b2a_hex(os.urandom(5)).decode()
+        req = requests.get(JUST_JOIN_IT_API_URL, params={"hash": random_hash})
+        resp = req.json()
+        return resp
 
     def filter_advertisements(self) -> dict:
         return {}

@@ -1,4 +1,7 @@
 envs/.db
 envs/.notifier
-.vscode
-.pytest_cache
+.vscode/
+.pytest_cache/
+.mypy_cache/
+venv/
+.idea/

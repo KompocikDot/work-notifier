@@ -3,14 +3,13 @@
 > Project monitoring few popular job-related websites **(like justjoin.it)** for new job advertisements. New ads are filtered and if they meet criteria they are sent to the user through discord webhook
 
 ### Dependencies and technologies used:
-- `requests`
-- `discord_webhook`
-- `pytest`
-- `postgreSQL`
-- `docker`
+- requests
+- discord_webhook
+- pytest
+- postgreSQL
+- docker
 
 ### Formatting and typechecking
-> Project is formatted using:
 - black
 - flake8
 - isort

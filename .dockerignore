@@ -4,3 +4,6 @@ envs/.notifer.example
 .vscode
 .pytest_cache
 .github/
+.mypy_cache
+venv/
+.idea/
