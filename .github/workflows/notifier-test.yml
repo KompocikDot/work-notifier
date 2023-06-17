@@ -1,0 +1,19 @@
+name: Test Notifier
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run-tests:
+    runs-on: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+      - name: Run Notifier tests
+        run: cd app && python main.py
