@@ -5,3 +5,5 @@ envs/.notifier
 .mypy_cache/
 venv/
 .idea/
+app/notifer.log
+app/__pycache__

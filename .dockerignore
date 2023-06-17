@@ -7,3 +7,4 @@ envs/.notifer.example
 .mypy_cache
 venv/
 .idea/
+app/notifer.log
