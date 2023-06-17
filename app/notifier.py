@@ -21,7 +21,7 @@ class Notifier:
         self.proxies_list: list[dict] = []
         self.filters: dict[str, str | bool | list[str] | None] = {}
         self.webhook_url: str | None = None
-        self.client: requests.Session = requests.session()
+        self.client = requests.session()
         self.load_user_variables()
         self.load_proxies()
 
