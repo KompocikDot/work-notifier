@@ -20,7 +20,7 @@
 1. Clone git repository using `git clone git@github.com:KompocikDot/workifier.git`
 2. Rename `.db.example` to `.db` and `.notifier.example` to `.notifier` and fill the variables in both files
 > Without Docker and Make
-3. Run `python main.py` or `python3 main.py` for linux/MacOS
+3. Run `python main.py` or `python3 main.py` for linux/macOS
 > With Docker and Make
 3. Run `make build && make run`
 
