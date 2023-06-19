@@ -1,11 +1,12 @@
-WORK_TYPE=
-KEYWORDS=
-CITY=
-COUNTRY=
-REMOTE=
-MIN_SALARY=
-EXPERIENCE=
+KEYWORDS=python,junior,javascript
+CITY=kraków,warszawa
+REMOTE=False
+MIN_SALARY=1000
+EXPERIENCE=junior
+SKIP_NO_SALARY=False
 
-REFRESH_RATE=
+SKIP_FILTERS=True
+REFRESH_RATE=20 # time in seconds
 
-DISCORD_WEBHOOK=
+USE_PROXIES=False
+DISCORD_WEBHOOK=https://discord.com/api/webhooks/...
