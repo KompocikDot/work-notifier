@@ -56,7 +56,7 @@ class BaseSite(ABC):
         pass
 
     @abstractmethod
-    def prepare_webhook_data(self, ad_data: dict) -> dict[str, str | int | list]:
+    def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int | list]:
         pass
 
     def send_webhook(self, webhook_data: dict) -> None:
