@@ -1,6 +1,6 @@
 README.md
 envs/.db.example
-envs/.notifer.example
+envs/.notifier.example
 .vscode
 .pytest_cache
 .github/

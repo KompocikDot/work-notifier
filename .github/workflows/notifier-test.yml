@@ -12,9 +12,7 @@ on:
 jobs:
   run-tests:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./app/
+
     steps:
       - uses: actions/checkout@v3
 
@@ -22,7 +20,7 @@ jobs:
         uses: actions/setup-python@v4
 
       - name: Install dependencies
-        run: pip install -r ../requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Run Notifier tests
-        run: python main.py
+        run: python app/main.py
