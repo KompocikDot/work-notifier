@@ -19,6 +19,8 @@ class JustJoinIt(BaseSite):
                 else:
                     filtered = jobs_data
                 for ad in filtered:
+                    ad.pop("published_at")  # Deletes published_at as it's not needed
+
                     digest = self.create_hash_from_ad(ad)
                     if not self.check_if_exists_in_db(digest):
                         self.save_to_db(ad, digest)
@@ -68,14 +70,13 @@ class JustJoinIt(BaseSite):
 
     def save_to_db(self, ad_data: dict, digest_hash: bytes) -> None:
         self._cursor.execute(
-            "INSERT INTO just_join_it VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            "INSERT INTO just_join_it VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
             (
                 digest_hash,
                 ad_data["title"],
                 ad_data["city"],
                 ad_data["experience_level"],
                 ad_data["company_name"],
-                ad_data["published_at"],
                 "SKILLS_STR",
                 ad_data["remote"],
                 ad_data["id"],
@@ -90,5 +91,4 @@ class JustJoinIt(BaseSite):
             "company": ad_data["company_name"],
             "skills": "[]",
             "remote": ad_data["remote"],
-            "published_at": ad_data["published_at"],
         }

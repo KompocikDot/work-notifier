@@ -4,7 +4,6 @@ CREATE TABLE IF NOT EXISTS just_join_it(
     city VARCHAR(127),
     experience_level VARCHAR(20),
     company_name VARCHAR(127),
-    published_at TIMESTAMP,
     -- TODO: Add employment_types with salaries
     skills_str VARCHAR(255),
     remote BOOLEAN,

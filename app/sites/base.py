@@ -70,7 +70,6 @@ class BaseSite(ABC):
         embed.add_embed_field(name="Company", value=webhook_data["company"])
         embed.add_embed_field(name="Skills", value=webhook_data["skills"])
         embed.add_embed_field(name="Remote", value=webhook_data["remote"])
-        embed.add_embed_field(name="Published at", value=webhook_data["published_at"])
         embed.set_timestamp()
 
         webhook.add_embed(embed)
