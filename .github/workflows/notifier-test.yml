@@ -23,4 +23,4 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run Notifier tests
-        run: python app/main.py
+        run: pytest

@@ -19,13 +19,11 @@ class JustJoinIt(BaseSite):
                 else:
                     filtered = jobs_data
                 for ad in filtered:
-                    ad.pop("published_at")  # Deletes published_at as it's not needed
-
-                    digest = self.create_hash_from_ad(ad)
+                    prepared_ad = self.prepare_advert_data(ad)
+                    digest = self.create_hash_from_ad(prepared_ad)
                     if not self.check_if_exists_in_db(digest):
-                        self.save_to_db(ad, digest)
-                        webhook_data = self.prepare_webhook_data(ad)
-                        self.send_webhook(webhook_data)
+                        self.save_to_db(prepared_ad, digest)
+                        self.send_webhook(prepared_ad)
 
             time.sleep(self._refresh_rate)
 
@@ -83,7 +81,7 @@ class JustJoinIt(BaseSite):
             ),
         )
 
-    def prepare_webhook_data(self, ad_data: dict) -> dict[str, str | int | list]:
+    def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int | list]:
         return {
             "job_title": ad_data["title"],
             "job_url": BASE_JUST_JOIN_IT_URL + ad_data["id"],
