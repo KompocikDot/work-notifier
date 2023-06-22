@@ -22,5 +22,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Run pre-commit
+        run: pre-commit
+
       - name: Run Notifier tests
         run: pytest
