@@ -4,7 +4,7 @@ import requests
 
 from .base import BaseSite
 
-JUST_JOIN_IT_API_URL = "https://justjoin.it/api/offers?limit=1"
+JUST_JOIN_IT_API_URL = "https://justjoin.it/api/offers"
 BASE_JUST_JOIN_IT_URL = "https://justjoin.it/offers/"
 
 
@@ -16,6 +16,7 @@ class JustJoinIt(BaseSite):
             if jobs_data:
                 if not self._filter_data["SKIP_FILTERS"]:
                     filtered = self.filter(jobs_data)
+                    self._logger.info(f"Skipped {len(jobs_data) - len(filtered)} jobs")
                 else:
                     filtered = jobs_data
                 for ad in filtered:
@@ -51,9 +52,14 @@ class JustJoinIt(BaseSite):
             if row["remote"] != self._filter_data["REMOTE"]:
                 continue
             if not self._filter_data["REMOTE"]:
-                if row["city"].lower() != self._filter_data["CITY"]:
+                if (
+                    self._filter_data["CITY"]
+                    and row["city"].lower() != self._filter_data["CITY"]
+                ):
                     continue
-            if self._filter_data["EXPERIENCE"] != row["experience_level"]:
+            if self._filter_data["EXPERIENCE"] and (
+                self._filter_data["EXPERIENCE"] != row["experience_level"]
+            ):
                 continue
             # TODO: Add salary filtering later on as it may be really complicated
             filtered.append(row)
@@ -71,11 +77,11 @@ class JustJoinIt(BaseSite):
             "INSERT INTO just_join_it VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
             (
                 digest_hash,
-                ad_data["title"],
+                ad_data["job_title"],
                 ad_data["city"],
-                ad_data["experience_level"],
-                ad_data["company_name"],
-                "SKILLS_STR",
+                ad_data["exp"],
+                ad_data["company"],
+                ad_data["skills"],
                 ad_data["remote"],
                 ad_data["id"],
             ),
@@ -84,9 +90,13 @@ class JustJoinIt(BaseSite):
     def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int | list]:
         return {
             "job_title": ad_data["title"],
+            "city": ad_data["city"],
+            "id": ad_data["id"],
             "job_url": BASE_JUST_JOIN_IT_URL + ad_data["id"],
             "exp": ad_data["experience_level"],
             "company": ad_data["company_name"],
-            "skills": "[]",
+            "skills": "\n".join(
+                [f"- {skill['name'].lower()}" for skill in ad_data["skills"]]
+            ),
             "remote": ad_data["remote"],
         }

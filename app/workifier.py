@@ -38,11 +38,10 @@ class Workifier:
         env.read_env("envs/.notifier")
 
         self.filters = {
-            "CITY": env.str("CITY").lower(),
-            "COUNTRY": env.str("COUNTRY", ""),
-            "MIN_SALARY": env.int("MIN_SALARY", 1),
+            "CITY": env.str("CITY", "").lower(),
+            "MIN_SALARY": env.int("MIN_SALARY", 0),
             "WORK_TYPE": env.str("WORK_TYPE", ""),
-            "KEYWORDS": [kwd.lower() for kwd in env.list("KEYWORDS", "")],
+            "KEYWORDS": [kwd.lower() for kwd in env.list("KEYWORDS", [])],
             "REMOTE": env.bool("REMOTE", False),
             "EXPERIENCE": env.str("EXPERIENCE", ""),
             "SKIP_NO_SALARY": env.bool("SKIP_NO_SALARY", False),
