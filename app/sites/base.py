@@ -61,7 +61,8 @@ class BaseSite(ABC):
 
     def send_webhook(self, webhook_data: dict) -> None:
         webhook = DiscordWebhook(
-            self._webhook_url, content="New job ad found", rate_limit_retry=True
+            self._webhook_url,
+            rate_limit_retry=True,
         )
         embed = DiscordEmbed(
             title=webhook_data["job_title"], url=webhook_data["job_url"]
@@ -70,6 +71,7 @@ class BaseSite(ABC):
         embed.add_embed_field(name="Company", value=webhook_data["company"])
         embed.add_embed_field(name="Skills", value=webhook_data["skills"])
         embed.add_embed_field(name="Remote", value=webhook_data["remote"])
+        embed.add_embed_field(name="City", value=webhook_data["city"])
         embed.set_timestamp()
 
         webhook.add_embed(embed)
