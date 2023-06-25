@@ -40,6 +40,10 @@ class BaseSite(ABC):
             self._db_conn.close()
 
     @abstractmethod
+    def run(self) -> None:
+        pass
+
+    @abstractmethod
     def retrieve_data(self) -> list[dict] | dict:
         pass
 

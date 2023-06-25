@@ -15,6 +15,15 @@
 - isort
 - mypy
 
+## Requirements
+1. PostgreSQL 14+
+2. Python 3.10+
+> OR
+1. Docker
+2. Docker compose
+
+> **Optionally Make**
+
 ## Usage
 
 1. Clone git repository using `git clone git@github.com:KompocikDot/workifier.git`
@@ -26,3 +35,16 @@
 
 
 ## NOTE: at the moment project is in POC phase
+
+## Roadmap
+- Add more sites
+  - [pracuj.pl](https://it.pracuj.pl)
+  - [bulldogjob](https://bulldogjob.pl)
+  - [nofluffjobs](https://nofluffjobs.com/pl/)
+- Write tests
+- Add more filters eg. salary, employment type
+- Cleanup code of both databases and notifier(make code more generic) 
+- Add more options to notify(?)
+  - Slack
+  - SMS
+  - Email
