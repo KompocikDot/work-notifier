@@ -6,38 +6,26 @@ PRACUJ_PL_API_URL = "https://massachusetts.pracuj.pl/api/offers?jobBoardVersion=
 
 
 class ItPracujPL(BaseSite):
-    def run(self) -> None:
-        pass
+    def filter(self, data: list[dict]) -> list[dict]:
+        return data
 
-    def retrieve_data(self) -> list[dict] | dict:
+    def retrieve_data(self) -> list[dict]:
         proxy = self.retrieve_random_proxy()
-        req = requests.get(PRACUJ_PL_API_URL, proxies=proxy)
-        resp = req.json()
-        return resp.get("offers", [])
+        params = {"pn": 1}
+        offers = []
 
-    def check_if_exists_in_db(self, digest_hash: bytes) -> bool:
-        query = self._cursor.execute(
-            "SELECT hash FROM it_pracuj_pl WHERE hash = %s", (digest_hash,)
-        )
-        res = query.fetchone()
-        return res is not None
+        while True:
+            req = requests.get(PRACUJ_PL_API_URL, proxies=proxy, params=params)
+            self._logger.info(f"Retrieved page {params['pn']}")
+            resp = req.json()
+            if pag_offers := resp["offers"]:
+                offers += [*pag_offers]
+                params["pn"] += 1
+            else:
+                break
+        return offers
 
-    def save_to_db(self, ad_data: dict, digest_hash: bytes) -> None:
-        self._cursor.execute(
-            "INSERT INTO just_join_it VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
-            (
-                digest_hash,
-                ad_data["job_title"],
-                ad_data["city"],
-                ad_data["exp"],
-                ad_data["company"],
-                ad_data["skills"],
-                ad_data["remote"],
-                ad_data["id"],
-            ),
-        )
-
-    def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int | list]:
+    def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int]:
         return {
             "job_title": ad_data["jobTitle"],
             "city": ad_data["location"],
@@ -45,6 +33,6 @@ class ItPracujPL(BaseSite):
             "job_url": ad_data["offerUrl"],
             "exp": ad_data["employmentLevel"],
             "company": ad_data["employer"],
-            "skills": ad_data["technologiesExpected"],
+            "skills": "||".join(ad_data["technologiesExpected"]),
             "remote": ad_data["remoteWork"],
         }
