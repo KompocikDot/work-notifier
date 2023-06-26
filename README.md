@@ -33,18 +33,27 @@
 > With Docker and Make
 3. Run `make build && make run`
 
-
+## Envs explanations(app settings)
+- `KEYWRODS` - string - list of words to search in advert(delimited by comma)
+- `CITY` - string - city to filter
+- `REMOTE` - bool - true/false
+- `MIN_SALARY` - int - only positive value
+- `EXPERIENCE` - enum - intern/trainee/junior/mid/senior/lead
+- `SKIP_NO_SALARY` - bool - true/false
+- `REFRESH_RATE` - int - seconds to wait until next try to fetch data
+- `SKIP_FILTERS` - bool - true/false
+- `USE_PROXIES` - bool - true/false
+- `DISCORD_WEBHOOK` - string - discord webhook url to post ads
 ## NOTE: at the moment project is in POC phase
 
 ## Roadmap
-- Add more sites
-  - [pracuj.pl](https://it.pracuj.pl)
-  - [bulldogjob](https://bulldogjob.pl)
-  - [nofluffjobs](https://nofluffjobs.com/pl/)
 - Write tests
-- Add more filters eg. salary, employment type
-- Cleanup code of both databases and notifier(make code more generic) 
+- Add more filters eg. salary, employment type 
 - Add more options to notify(?)
   - Slack
   - SMS
   - Email
+
+
+## Contributing
+> If you want to contribute in this project, please open pull request OR write ideas directly to me.
