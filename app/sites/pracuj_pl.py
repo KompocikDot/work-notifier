@@ -6,9 +6,6 @@ PRACUJ_PL_API_URL = "https://massachusetts.pracuj.pl/api/offers?jobBoardVersion=
 
 
 class ItPracujPL(BaseSite):
-    def filter(self, data: list[dict]) -> list[dict]:
-        return data
-
     def retrieve_data(self) -> list[dict]:
         proxy = self.retrieve_random_proxy()
         params = {"pn": 1}
@@ -17,6 +14,7 @@ class ItPracujPL(BaseSite):
         while True:
             req = requests.get(PRACUJ_PL_API_URL, proxies=proxy, params=params)
             self._logger.info(f"Retrieved page {params['pn']}")
+
             resp = req.json()
             if pag_offers := resp["offers"]:
                 offers += [*pag_offers]

@@ -13,37 +13,6 @@ class JustJoinIt(BaseSite):
         resp = req.json()
         return resp
 
-    def filter(self, data: list[dict]) -> list[dict]:
-        filtered = []
-        for row in data:
-            # TODO: Dirty trick to not iter n^2 over kwds and user_kwds
-            skills_names = "|".join([skill["name"].lower() for skill in row["skills"]])
-            user_kwds = self._filter_data["KEYWORDS"]
-            if user_kwds:
-                kwd_in_skills = any(
-                    True for kwd in user_kwds if kwd.lower() in skills_names
-                )
-                kwd_in_title = any(kwd in row["title"] for kwd in user_kwds)
-
-                if not kwd_in_title and not kwd_in_skills:
-                    continue
-
-            if row["remote"] != self._filter_data["REMOTE"]:
-                continue
-            if not self._filter_data["REMOTE"]:
-                if (
-                    self._filter_data["CITY"]
-                    and row["city"].lower() != self._filter_data["CITY"]
-                ):
-                    continue
-            if self._filter_data["EXPERIENCE"] and (
-                self._filter_data["EXPERIENCE"] != row["experience_level"]
-            ):
-                continue
-            # TODO: Add salary filtering later on as it may be really complicated
-            filtered.append(row)
-        return filtered
-
     def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int]:
         return {
             "job_title": ad_data["title"],

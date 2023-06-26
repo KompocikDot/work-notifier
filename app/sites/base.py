@@ -45,17 +45,23 @@ class BaseSite(ABC):
             jobs_data: list[dict] = self.retrieve_data()
             self._logger.info(f"Found {len(jobs_data)} advertisements")
             if jobs_data:
+                prepared_ads = []
+                for ad in jobs_data:
+                    prepared_ads.append(self.prepare_advert_data(ad))
+
                 if not self._filter_data["SKIP_FILTERS"]:
-                    filtered = self.filter(jobs_data)
-                    self._logger.info(f"Skipped {len(jobs_data) - len(filtered)} jobs")
+                    filtered = self.filter(prepared_ads)
+                    self._logger.info(
+                        f"Skipped {len(prepared_ads) - len(filtered)} jobs"
+                    )
                 else:
-                    filtered = jobs_data
+                    filtered = prepared_ads
+
                 for ad in filtered:
-                    prepared_ad = self.prepare_advert_data(ad)
-                    digest = self.create_hash_from_ad(prepared_ad)
+                    digest = self.create_hash_from_ad(ad)
                     if not self.check_if_exists_in_db(digest):
-                        self.save_to_db(prepared_ad, digest)
-                        self.send_webhook(prepared_ad)
+                        self.save_to_db(ad, digest)
+                        self.send_webhook(ad)
 
             time.sleep(self._refresh_rate)
 
@@ -64,12 +70,38 @@ class BaseSite(ABC):
         pass
 
     @abstractmethod
-    def filter(self, data: list[dict]) -> list[dict]:
-        pass
-
-    @abstractmethod
     def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int]:
         pass
+
+    def filter(self, data: list[dict]) -> list[dict]:
+        filtered = []
+        for row in data:
+            # TODO: Dirty trick to not iter n^2 over kwds and user_kwds
+            user_kwds = self._filter_data["KEYWORDS"]
+            if user_kwds:
+                kwd_in_skills = any(
+                    True for kwd in user_kwds if kwd.lower() in row["skills"]
+                )
+                kwd_in_title = any(kwd in row["job_title"] for kwd in user_kwds)
+
+                if not kwd_in_title and not kwd_in_skills:
+                    continue
+
+            if row["remote"] != self._filter_data["REMOTE"]:
+                continue
+            if not self._filter_data["REMOTE"]:
+                if (
+                    self._filter_data["CITY"]
+                    and row["city"].lower() != self._filter_data["CITY"]
+                ):
+                    continue
+            if self._filter_data["EXPERIENCE"] and (
+                self._filter_data["EXPERIENCE"] != row["exp"]
+            ):
+                continue
+            # TODO: Add salary filtering later on as it may be really complicated
+            filtered.append(row)
+        return filtered
 
     def send_webhook(self, webhook_data: dict) -> None:
         webhook = DiscordWebhook(
@@ -105,9 +137,6 @@ class BaseSite(ABC):
         return res is not None
 
     def save_to_db(self, ad_data: dict, digest_hash: bytes) -> None:
-        print(
-            ad_data["skills"],
-        )
         self._cursor.execute(
             "INSERT INTO workifier_jobs VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
             (

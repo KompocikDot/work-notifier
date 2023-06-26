@@ -2,6 +2,7 @@ import logging
 from threading import Thread
 
 from environs import Env
+from sites.bulldogjob import BulldogJob
 from sites.just_join_it import JustJoinIt
 from sites.pracuj_pl import ItPracujPL
 
@@ -90,7 +91,11 @@ class Workifier:
             self.webhook_url,
             self.db_url,
         ]
-        sites_objs = [JustJoinIt(*sites_args), ItPracujPL(*sites_args)]
+        sites_objs = [
+            JustJoinIt(*sites_args),
+            ItPracujPL(*sites_args),
+            BulldogJob(*sites_args),
+        ]
 
         for obj in sites_objs:
             t_name = f"{obj.__class__.__name__}-Thread"
