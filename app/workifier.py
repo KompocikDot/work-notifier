@@ -4,6 +4,7 @@ from threading import Thread
 from environs import Env
 from sites.bulldogjob import BulldogJob
 from sites.just_join_it import JustJoinIt
+from sites.nofluffjobs import NoFluffJobs
 from sites.pracuj_pl import ItPracujPL
 
 LOGGING_FORMAT = "%(asctime)s [%(threadName)s][%(levelname)s] %(message)s"
@@ -95,6 +96,7 @@ class Workifier:
             JustJoinIt(*sites_args),
             ItPracujPL(*sites_args),
             BulldogJob(*sites_args),
+            NoFluffJobs(*sites_args),
         ]
 
         for obj in sites_objs:

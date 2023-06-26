@@ -17,7 +17,7 @@ class ItPracujPL(BaseSite):
 
             resp = req.json()
             if pag_offers := resp["offers"]:
-                offers += [*pag_offers]
+                offers += pag_offers
                 params["pn"] += 1
             else:
                 break
