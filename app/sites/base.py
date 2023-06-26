@@ -2,6 +2,7 @@ import hashlib
 import json
 import logging
 import random
+import time
 from abc import ABC, abstractmethod
 
 import psycopg
@@ -39,12 +40,27 @@ class BaseSite(ABC):
         if hasattr(self, "_db_conn"):
             self._db_conn.close()
 
-    @abstractmethod
     def run(self) -> None:
-        pass
+        while True:
+            jobs_data: list[dict] = self.retrieve_data()
+            self._logger.info(f"Found {len(jobs_data)} advertisements")
+            if jobs_data:
+                if not self._filter_data["SKIP_FILTERS"]:
+                    filtered = self.filter(jobs_data)
+                    self._logger.info(f"Skipped {len(jobs_data) - len(filtered)} jobs")
+                else:
+                    filtered = jobs_data
+                for ad in filtered:
+                    prepared_ad = self.prepare_advert_data(ad)
+                    digest = self.create_hash_from_ad(prepared_ad)
+                    if not self.check_if_exists_in_db(digest):
+                        self.save_to_db(prepared_ad, digest)
+                        self.send_webhook(prepared_ad)
+
+            time.sleep(self._refresh_rate)
 
     @abstractmethod
-    def retrieve_data(self) -> list[dict] | dict:
+    def retrieve_data(self) -> list[dict]:
         pass
 
     @abstractmethod
@@ -52,15 +68,7 @@ class BaseSite(ABC):
         pass
 
     @abstractmethod
-    def check_if_exists_in_db(self, digest_hash: bytes) -> bool:
-        pass
-
-    @abstractmethod
-    def save_to_db(self, ad_data: dict, digest_hash: bytes) -> None:
-        pass
-
-    @abstractmethod
-    def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int | list]:
+    def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int]:
         pass
 
     def send_webhook(self, webhook_data: dict) -> None:
@@ -73,7 +81,10 @@ class BaseSite(ABC):
         )
         embed.add_embed_field(name="Experience", value=webhook_data["exp"])
         embed.add_embed_field(name="Company", value=webhook_data["company"])
-        embed.add_embed_field(name="Skills", value=webhook_data["skills"])
+
+        skills_arr = webhook_data["skills"].split("||")
+        skills = "\n".join([f"- {skill.lower()}" for skill in skills_arr])
+        embed.add_embed_field(name="Skills", value=skills)
         embed.add_embed_field(name="Remote", value=webhook_data["remote"])
         embed.add_embed_field(name="City", value=webhook_data["city"])
         embed.set_timestamp()
@@ -85,6 +96,31 @@ class BaseSite(ABC):
         if self._proxies_list:
             return random.choice(self._proxies_list)
         return {}
+
+    def check_if_exists_in_db(self, digest_hash: bytes) -> bool:
+        query = self._cursor.execute(
+            "SELECT hash FROM workifier_jobs WHERE hash = %s", (digest_hash,)
+        )
+        res = query.fetchone()
+        return res is not None
+
+    def save_to_db(self, ad_data: dict, digest_hash: bytes) -> None:
+        print(
+            ad_data["skills"],
+        )
+        self._cursor.execute(
+            "INSERT INTO workifier_jobs VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
+            (
+                digest_hash,
+                ad_data["job_title"],
+                ad_data["city"],
+                ad_data["exp"],
+                ad_data["company"],
+                ad_data["skills"],
+                ad_data["remote"],
+                ad_data["job_url"],
+            ),
+        )
 
     @staticmethod
     def create_hash_from_ad(ad_data: dict) -> bytes:
