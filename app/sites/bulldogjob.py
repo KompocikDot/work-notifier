@@ -30,7 +30,7 @@ class BulldogJob(BaseSite):
             if jobs := res["pageProps"]["jobs"]:
                 page += 1
                 params["slug"] = f"page,{page}"
-                ads += [*jobs]
+                ads += jobs
             else:
                 break
 
