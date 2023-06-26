@@ -13,6 +13,7 @@ class ItPracujPL(BaseSite):
 
         while True:
             req = requests.get(PRACUJ_PL_API_URL, proxies=proxy, params=params)
+            self._logger.info(f"Retrieved page {params['pn']}")
 
             resp = req.json()
             if pag_offers := resp["offers"]:
