@@ -23,7 +23,6 @@ class NoFluffJobs(BaseSite):
             if postings := res["postings"]:
                 ads += postings
                 page += 1
-                break
             else:
                 break
 
