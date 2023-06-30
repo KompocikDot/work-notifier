@@ -63,6 +63,7 @@ class BaseSite(ABC):
                         self.save_to_db(ad, digest)
                         self.send_webhook(ad)
 
+            self._logger.info(f"Retrying in {self._refresh_rate} seconds")
             time.sleep(self._refresh_rate)
 
     @abstractmethod
