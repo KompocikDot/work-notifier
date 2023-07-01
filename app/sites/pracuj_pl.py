@@ -1,26 +1,36 @@
 import requests
 
-from app.sites.base import BaseSite
+from app.sites.base import BaseSite, RetrieveException
 
 PRACUJ_PL_API_URL = "https://massachusetts.pracuj.pl/api/offers?jobBoardVersion=2"
 
 
 class ItPracujPL(BaseSite):
     def retrieve_data(self) -> list[dict]:
-        proxy = self.retrieve_random_proxy()
+        client = requests.Session()
+        client.proxies = self.retrieve_random_proxy()
         params = {"pn": 1}
         offers = []
 
         while True:
-            req = requests.get(PRACUJ_PL_API_URL, proxies=proxy, params=params)
-            self._logger.info(f"Retrieved page {params['pn']}")
+            try:
+                self._logger.info(f"Retrieving page {params['pn']}")
 
-            resp = req.json()
-            if pag_offers := resp["offers"]:
-                offers += pag_offers
-                params["pn"] += 1
-            else:
-                break
+                req = client.get(PRACUJ_PL_API_URL, params=params)
+                resp = req.json()
+
+                if pag_offers := resp["offers"]:
+                    offers += pag_offers
+                    params["pn"] += 1
+                else:
+                    break
+
+            except requests.exceptions.ProxyError:
+                self._logger.exception("Proxy error, changing proxy")
+                client.proxies = self.retrieve_random_proxy()
+
+            except requests.exceptions.RequestException:
+                raise RetrieveException
         return offers
 
     def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int]:

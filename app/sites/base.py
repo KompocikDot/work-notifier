@@ -9,6 +9,10 @@ import psycopg
 from discord_webhook import DiscordEmbed, DiscordWebhook
 
 
+class RetrieveException(BaseException):
+    """Exception for failed data retrieving"""
+
+
 class BaseSite(ABC):
     def __init__(
         self,
@@ -42,7 +46,16 @@ class BaseSite(ABC):
 
     def run(self) -> None:
         while True:
-            jobs_data: list[dict] = self.retrieve_data()
+            try:
+                jobs_data: list[dict] = self.retrieve_data()
+            except RetrieveException:
+                self._logger.exception(
+                    f"Could not retrieve data, retrying in {self._refresh_rate} seconds"
+                )
+                time.sleep(self._refresh_rate)
+                print("continiue")
+                continue
+
             self._logger.info(f"Found {len(jobs_data)} advertisements")
             if jobs_data:
                 prepared_ads = []

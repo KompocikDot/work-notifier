@@ -3,7 +3,7 @@ import json
 import requests
 from bs4 import BeautifulSoup
 
-from .base import BaseSite
+from .base import BaseSite, RetrieveException
 
 BULLDOGJOB_BASE_API_URL = (
     "https://bulldogjob.pl/_next/data/{id}/pl/companies/jobs/s/"
@@ -14,8 +14,10 @@ BULLDOGJOB_BASE_JOB_URL = "https://bulldogjob.pl/companies/jobs/"
 
 class BulldogJob(BaseSite):
     def retrieve_data(self) -> list[dict]:
-        proxy = self.retrieve_random_proxy()
-        raw_html = requests.get(BULLDOGJOB_BASE_JOB_URL, proxies=proxy)
+        client = requests.Session()
+        client.proxies = self.retrieve_random_proxy()
+
+        raw_html = client.get(BULLDOGJOB_BASE_JOB_URL)
         next_build_id = self.parse_nextjs_build_id(raw_html.text)
 
         ads = []
@@ -23,16 +25,26 @@ class BulldogJob(BaseSite):
         params = {"slug": f"page,{page}"}
 
         while True:
-            self._logger.info(f"Retrieving page {page}")
-            url = BULLDOGJOB_BASE_API_URL.format(id=next_build_id, page=page)
-            req = requests.get(url, params=params)
-            res = req.json()
-            if jobs := res["pageProps"]["jobs"]:
-                page += 1
-                params["slug"] = f"page,{page}"
-                ads += jobs
-            else:
-                break
+            try:
+                self._logger.info(f"Retrieving page {page}")
+
+                url = BULLDOGJOB_BASE_API_URL.format(id=next_build_id, page=page)
+                req = client.get(url, params=params)
+                res = req.json()
+
+                if jobs := res["pageProps"]["jobs"]:
+                    page += 1
+                    params["slug"] = f"page,{page}"
+                    ads += jobs
+                else:
+                    break
+
+            except requests.exceptions.ProxyError:
+                self._logger.exception("Proxy error, changing proxy")
+                client.proxies = self.retrieve_random_proxy()
+
+            except requests.exceptions.RequestException:
+                raise RetrieveException
 
         return ads
 
