@@ -10,6 +10,9 @@ class Experience(Enum):
     LEAD = 6
     UNKNOWN = 7
 
+    def __str__(self):
+        return self.name
+
     def __ge__(self, other):
         if self.__class__ is other.__class__:
             return self.value >= other.value
