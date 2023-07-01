@@ -69,11 +69,15 @@ class Workifier:
         with open("app/proxies.txt") as f:
             raw_proxies = [line.strip() for line in f.readlines()]
             for raw_proxy in raw_proxies:
-                user, pwd, ip, port = raw_proxy.split(":")
-                if not all([user, pwd, ip, port]):
+                split_count = raw_proxy.count(":")
+                if split_count == 4:
+                    user, pwd, ip, port = raw_proxy.split(":")
+                    proxy = {"http": f"http://{ip}:{port}@{user}:{pwd}"}
+                elif split_count == 2:
+                    ip, port = raw_proxy.split(":")
                     proxy = {"http": f"http://{ip}:{port}"}
                 else:
-                    proxy = {"http": f"http://{ip}:{port}@{user}:{pwd}"}
+                    continue
 
                 self.proxies_list.append(proxy)
 

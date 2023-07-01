@@ -1,6 +1,6 @@
 import requests
 
-from .base import BaseSite
+from .base import BaseSite, RetrieveException
 
 NO_FLUFF_JOBS_API_URL = (
     "https://nofluffjobs.com/api/search/"
@@ -12,20 +12,31 @@ NO_FLUFF_JOBS_JOB_URL = "https://nofluffjobs.com/pl/job/"
 
 class NoFluffJobs(BaseSite):
     def retrieve_data(self) -> list[dict]:
-        proxy = self.retrieve_random_proxy()
+        client = requests.Session()
+        client.proxies = self.retrieve_random_proxy()
+
         ads = []
         page = 1
         while True:
-            url = NO_FLUFF_JOBS_API_URL.format(page=page)
-            self._logger.info(f"Retrieving page {page}")
-            req = requests.post(url, json={"rawSearch": ""}, proxies=proxy)
-            res = req.json()
-            if postings := res["postings"]:
-                ads += postings
-                page += 1
-            else:
-                break
+            try:
+                self._logger.info(f"Retrieving page {page}")
 
+                url = NO_FLUFF_JOBS_API_URL.format(page=page)
+                req = client.post(url, json={"rawSearch": ""})
+                res = req.json()
+
+                if postings := res["postings"]:
+                    ads += postings
+                    page += 1
+                else:
+                    break
+
+            except requests.exceptions.ProxyError:
+                self._logger.exception("Proxy error, changing proxy")
+                client.proxies = self.retrieve_random_proxy()
+
+            except requests.exceptions.RequestException:
+                raise RetrieveException
         return ads
 
     def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int]:

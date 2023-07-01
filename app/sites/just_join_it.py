@@ -1,6 +1,6 @@
 import requests
 
-from .base import BaseSite
+from .base import BaseSite, RetrieveException
 
 JUST_JOIN_IT_API_URL = "https://justjoin.it/api/offers"
 BASE_JUST_JOIN_IT_URL = "https://justjoin.it/offers/"
@@ -8,10 +8,17 @@ BASE_JUST_JOIN_IT_URL = "https://justjoin.it/offers/"
 
 class JustJoinIt(BaseSite):
     def retrieve_data(self) -> list[dict]:
-        proxy = self.retrieve_random_proxy()
-        req = requests.get(JUST_JOIN_IT_API_URL, proxies=proxy)
-        resp = req.json()
-        return resp
+        while True:
+            try:
+                self._logger.info("Retrieving page")
+
+                proxy = self.retrieve_random_proxy()
+                req = requests.get(JUST_JOIN_IT_API_URL, proxies=proxy)
+                resp = req.json()
+                return resp
+
+            except requests.exceptions.RequestException:
+                raise RetrieveException
 
     def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int]:
         return {
