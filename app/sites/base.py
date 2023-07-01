@@ -8,6 +8,8 @@ from abc import ABC, abstractmethod
 import psycopg
 from discord_webhook import DiscordEmbed, DiscordWebhook
 
+from app.experience import Experience
+
 
 class RetrieveException(BaseException):
     """Exception for failed data retrieving"""
@@ -84,7 +86,7 @@ class BaseSite(ABC):
         pass
 
     @abstractmethod
-    def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int]:
+    def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int | Experience]:
         pass
 
     def filter(self, data: list[dict]) -> list[dict]:
@@ -109,8 +111,9 @@ class BaseSite(ABC):
                     and row["city"].lower() != self._filter_data["CITY"]
                 ):
                     continue
-            if self._filter_data["EXPERIENCE"] and (
-                self._filter_data["EXPERIENCE"] != row["exp"]
+            if (
+                self._filter_data["EXPERIENCE"]
+                and row["experience"] > self._filter_data["EXPERIENCE"]
             ):
                 continue
             # TODO: Add salary filtering later on as it may be really complicated

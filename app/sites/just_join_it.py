@@ -1,5 +1,6 @@
 import requests
 
+from ..experience import Experience
 from .base import BaseSite, RetrieveException
 
 JUST_JOIN_IT_API_URL = "https://justjoin.it/api/offers"
@@ -20,13 +21,13 @@ class JustJoinIt(BaseSite):
             except requests.exceptions.RequestException:
                 raise RetrieveException
 
-    def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int]:
+    def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int | Experience]:
         return {
             "job_title": ad_data["title"],
             "city": ad_data["city"],
             "id": ad_data["id"],
             "job_url": BASE_JUST_JOIN_IT_URL + ad_data["id"],
-            "exp": ad_data["experience_level"],
+            "exp": Experience.str_to_enum(ad_data["experience_level"]),
             "company": ad_data["company_name"],
             "skills": "||".join([skill["name"].lower() for skill in ad_data["skills"]]),
             "remote": ad_data["remote"],

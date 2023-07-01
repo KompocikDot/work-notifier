@@ -3,6 +3,7 @@ import json
 import requests
 from bs4 import BeautifulSoup
 
+from ..experience import Experience
 from .base import BaseSite, RetrieveException
 
 BULLDOGJOB_BASE_API_URL = (
@@ -48,13 +49,13 @@ class BulldogJob(BaseSite):
 
         return ads
 
-    def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int]:
+    def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int | Experience]:
         return {
             "job_title": ad_data["position"],
             "city": ad_data["city"],
             "id": ad_data["id"],
             "job_url": BULLDOGJOB_BASE_JOB_URL + ad_data["id"],
-            "exp": ad_data["experienceLevel"],
+            "exp": Experience.str_to_enum(ad_data["experienceLevel"]),
             "company": ad_data["company"]["name"],
             "skills": "||".join(
                 [skill["name"].lower() for skill in ad_data["technologies"]]

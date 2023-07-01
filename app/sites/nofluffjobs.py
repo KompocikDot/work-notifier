@@ -1,5 +1,6 @@
 import requests
 
+from ..experience import Experience
 from .base import BaseSite, RetrieveException
 
 NO_FLUFF_JOBS_API_URL = (
@@ -39,14 +40,14 @@ class NoFluffJobs(BaseSite):
                 raise RetrieveException
         return ads
 
-    def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int]:
+    def prepare_advert_data(self, ad_data: dict) -> dict[str, str | int | Experience]:
         return {
             "job_title": ad_data["title"],
             "city": ad_data["location"]["places"][0].get("city", ""),
             # TODO: think of it as there are many offers just from one company
             "id": ad_data["id"],
             "job_url": NO_FLUFF_JOBS_JOB_URL + ad_data["url"],
-            "exp": "|".join(ad_data["seniority"]),
+            "exp": Experience.str_to_enum("|".join(ad_data["seniority"])),
             "company": ad_data["name"],
             "skills": ad_data.get("technology", ""),
             "remote": ad_data["fullyRemote"],
