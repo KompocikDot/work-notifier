@@ -26,4 +26,4 @@ jobs:
         run: pre-commit
 
       - name: Run Notifier tests
-        run: pytest
+        run: python -m unittest
