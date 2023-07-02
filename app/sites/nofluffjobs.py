@@ -1,6 +1,7 @@
 import requests
 
-from ..experience import Experience
+from app.experience import Experience
+
 from .base import BaseSite, RetrieveException
 
 NO_FLUFF_JOBS_API_URL = (

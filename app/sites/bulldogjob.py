@@ -3,7 +3,8 @@ import json
 import requests
 from bs4 import BeautifulSoup
 
-from ..experience import Experience
+from app.experience import Experience
+
 from .base import BaseSite, RetrieveException
 
 BULLDOGJOB_BASE_API_URL = (

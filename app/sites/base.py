@@ -25,7 +25,6 @@ class BaseSite(ABC):
         webhook_url: str,
         db_url: str,
     ):
-        super().__init__()
         self._filter_data = filter_data
         self._refresh_rate = refresh_rate
         self._proxies_list = proxies_list
@@ -55,7 +54,6 @@ class BaseSite(ABC):
                     f"Could not retrieve data, retrying in {self._refresh_rate} seconds"
                 )
                 time.sleep(self._refresh_rate)
-                print("continiue")
                 continue
 
             self._logger.info(f"Found {len(jobs_data)} advertisements")
@@ -113,7 +111,7 @@ class BaseSite(ABC):
                     continue
             if (
                 self._filter_data["EXPERIENCE"]
-                and row["experience"] > self._filter_data["EXPERIENCE"]
+                and row["exp"] > self._filter_data["EXPERIENCE"]
             ):
                 continue
             # TODO: Add salary filtering later on as it may be really complicated
@@ -128,7 +126,7 @@ class BaseSite(ABC):
         embed = DiscordEmbed(
             title=webhook_data["job_title"], url=webhook_data["job_url"]
         )
-        embed.add_embed_field(name="Experience", value=webhook_data["exp"])
+        embed.add_embed_field(name="Experience", value=webhook_data["exp"].name)
         embed.add_embed_field(name="Company", value=webhook_data["company"])
 
         skills_arr = webhook_data["skills"].split("||")
@@ -160,7 +158,7 @@ class BaseSite(ABC):
                 digest_hash,
                 ad_data["job_title"],
                 ad_data["city"],
-                ad_data["exp"],
+                ad_data["exp"].name,
                 ad_data["company"],
                 ad_data["skills"],
                 ad_data["remote"],

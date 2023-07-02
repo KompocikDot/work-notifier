@@ -6,6 +6,5 @@ envs/.notifier
 venv/
 .idea/
 app/notifer.log
-app/__pycache__
 app/constants.py
-app/sites/__pycache__/
+**/__pycache__/**

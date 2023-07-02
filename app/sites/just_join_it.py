@@ -1,6 +1,7 @@
 import requests
 
-from ..experience import Experience
+from app.experience import Experience
+
 from .base import BaseSite, RetrieveException
 
 JUST_JOIN_IT_API_URL = "https://justjoin.it/api/offers"

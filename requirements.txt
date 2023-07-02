@@ -1,3 +1,5 @@
+
+beautifulsoup4~=4.12.2
 certifi==2023.5.7
 cfgv==3.3.1
 charset-normalizer==3.1.0
@@ -13,12 +15,12 @@ iniconfig==2.0.0
 marshmallow==3.19.0
 nodeenv==1.8.0
 packaging==23.1
+parameterized~=0.9.0
 platformdirs==3.8.0
 pluggy==1.2.0
 pre-commit==3.3.3
 psycopg==3.1.9
 psycopg-binary==3.1.9
-pytest==7.4.0
 python-dotenv==1.0.0
 PyYAML==6.0
 requests==2.31.0
