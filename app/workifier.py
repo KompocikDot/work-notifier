@@ -47,14 +47,11 @@ class Workifier:
             "WORK_TYPE": env.str("WORK_TYPE", ""),
             "KEYWORDS": [kwd.lower() for kwd in env.list("KEYWORDS", [])],
             "REMOTE": env.bool("REMOTE", False),
-            "EXPERIENCE": env.enum(
-                "EXPERIENCE", Experience.UNKNOWN, type=Experience, ignore_case=True
-            ),
+            "EXPERIENCE": Experience.str_to_enum(env.str("EXPERIENCE", "")),
             "SKIP_NO_SALARY": env.bool("SKIP_NO_SALARY", False),
             "SKIP_FILTERS": env.bool("SKIP_FILTERS", False),
         }
 
-        print(self.filters)
         self.use_proxies = env.bool("USE_PROXIES", False)
         self.refresh_rate = env.int("REFRESH_RATE", 10)
         self.webhook_url = env.str("DISCORD_WEBHOOK", "")

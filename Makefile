@@ -5,7 +5,7 @@ run:
 	docker-compose up
 
 test:
-	pytest
+	python -m unittest
 
 pc:
 	pre-commit run -a
